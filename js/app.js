@@ -819,6 +819,7 @@ function openTour(id) {
 }
 
 function closeTour() {
+  stopLiveTracking();
   $("#overlay").hidden = true;
   document.body.style.overflow = "";
   activeTour = null;
@@ -890,6 +891,7 @@ function flightTabHTML(tour) {
         <li><b>Buluşma:</b> Kalkıştan ${tour.scope === "yurtici" ? "1,5" : "3"} saat önce havalimanında rehberimizle</li>
       </ul>
       <p class="note">Uçuş numaraları ve saatler örnektir; kesin bilgiler biletiniz düzenlendiğinde bildirilir.</p>
+      ${liveTrackingHTML()}
     </div>`;
 }
 
@@ -1045,6 +1047,7 @@ function renderDrawer() {
         ${booking.confirmation ? bookingSuccessHTML(tour) : bookingFormHTML(tour)}
       </div>
     </div>`;
+  syncLiveTracking();
 }
 
 function validateBooking({ name, phone, email }) {

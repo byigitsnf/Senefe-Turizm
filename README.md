@@ -8,9 +8,12 @@ Canlı adres: https://yellow-water-0a41f371e.4.azurestaticapps.net
 index.html, css/, js/        Site (ön yüz)
   js/data.js                 Gömülü yedek veri; API'ye ulaşılamazsa kullanılır
   js/api.js                  Açılışta /api/catalog'dan veriyi çeker
+  js/live.js                 Uçuş sekmesindeki anlık uçuş takibi
 api/                         Azure Functions (Node.js) API
   src/routes.js              API uçları
   src/store.js               Cosmos DB ya da yerel JSON veri katmanı
+  src/opensky.js             OpenSky Network'ten canlı uçak konumları
+  src/airports.js            Havalimanı koordinatları ve havayolu adları
   seed/catalog.json          Test verisi (data.js'ten üretilir)
   scripts/seed-cosmos.js     Test verisini Cosmos DB'ye yükler
 infra/main.bicep             Azure kaynakları (ücretsiz katmanlar)
@@ -42,7 +45,31 @@ Abonelik başına yalnızca **bir** Cosmos DB hesabı ücretsiz katmanda olabili
 | `GET /api/tours?scope=yurtdisi&continent=avrupa&transport=Gemi` | Turlar (filtreler isteğe bağlı) |
 | `GET /api/tours/{id}` | Tek tur, ör. `/api/tours/par` |
 | `GET /api/visa` | Vize rehberi |
-| `GET /api/health` | Veri kaynağı: `cosmos` ya da `memory` |
+| `GET /api/live/{id}` | Turun uçuş hattında şu an havada olan İstanbul kalkışlı uçaklar, ör. `/api/live/par` |
+| `GET /api/health` | Veri kaynağı (`cosmos` ya da `memory`) ve OpenSky bağlantı türü |
+
+## Anlık uçuş takibi
+
+Uçaklı turların **Uçuş** sekmesinde, İstanbul'dan (IST ya da SAW) turun varış havalimanına giden ve şu an havada olan uçaklar listelenir; panel 30 saniyede bir yenilenir. Veri [OpenSky Network](https://openskynetwork.github.io/opensky-api/rest.html)'ten gelir. OpenSky kalkış ve varış bilgisi vermediği için uçuşlar şöyle bulunur:
+
+1. Hattın çevresindeki uçaklardan rotaya yakın olan ve varışa doğru uçanlar seçilir.
+2. Uçağın canlı izinin ilk noktası İstanbul'daysa İstanbul kalkışlı sayılır.
+3. OpenSky hesabı tanımlıysa dünün İstanbul kalkışlarına da bakılır: aynı çağrı kodlu uçuş dün bu havalimanına indiyse hat **doğrulanır**, başka yere indiyse uçak listeden çıkar. Hesap yoksa hat "tahmini" etiketiyle gösterilir. Örneğin doğuya giden uzun menzilli bir uçuş, Kapadokya hattının üzerinden geçerken o hatta uçuyor gibi görünebilir.
+
+Hesap gerekmez, ama önerilir: hesapsız sorgu hakkı IP başına günde 400 kredidir ve Azure'un paylaşılan IP adresinde çabuk dolabilir. Hesapla günde 4000 krediye çıkar ve 3. adım açılır.
+
+1. [opensky-network.org](https://opensky-network.org)'da ücretsiz hesap açın; **Account** sayfasında yeni bir **API client** oluşturun.
+2. Static Web App → **Ayarlar → Ortam değişkenleri → Production**'a `OPENSKY_CLIENT_ID` ve `OPENSKY_CLIENT_SECRET` değerlerini ekleyip **Uygula**'ya basın.
+3. `/api/health` yanıtında `"opensky": "hesap"` görünüyorsa tamamdır.
+
+Sonuçlar hat başına 90 saniye (hesapla 30 saniye), bir uçağın kalkış havalimanı 3 saat önbellekte tutulur. Yeni bir uçuş noktası eklerseniz `api/src/airports.js` içindeki `AIRPORTS` listesine ICAO kodunu ve koordinatını da ekleyin.
+
+### Kapatma ve geri alma
+
+Bu bir deneme özelliğidir; tamamı tek bir commit'te (`major-test-feature` etiketi) durur.
+
+- **Geçici olarak gizlemek:** `js/live.js` içinde `LIVE_TRACKING_ENABLED = false` yapıp gönderin. Panel kaybolur, API ucu yerinde kalır.
+- **Tamamen kaldırmak:** proje klasöründe `git revert major-test-feature` ve ardından `git push`. Özelliğin eklediği her şey geri alınır, sonraki değişiklikler korunur.
 
 ## Yerelde çalıştırma
 

@@ -1232,6 +1232,64 @@ details p { margin: 8px 0 0; color: var(--muted); }
 .flight__facts { display: flex; flex-direction: column; gap: 4px; margin: 4px 0 0; padding-left: 18px; font-size: 14px; }
 .flight .note { margin-top: 0; }
 
+/* Uçuş sekmesi: anlık uçuş takibi (OpenSky) */
+.live {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+.live__title { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; }
+.live__route { color: var(--muted); font-size: 13px; }
+.live__dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--ok);
+  box-shadow: 0 0 0 0 color-mix(in srgb, var(--ok) 60%, transparent);
+  animation: live-pulse 1.8s ease-out infinite;
+}
+@keyframes live-pulse { to { box-shadow: 0 0 0 8px transparent; } }
+.live__summary { margin: 0; font-size: 13px; color: var(--muted); }
+.live__summary b { color: var(--fg); }
+.live__empty { margin: 0; padding: 12px; border: 1px dashed var(--line); border-radius: 8px; color: var(--muted); font-size: 14px; text-align: center; }
+.live__list { display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; }
+.live__flight { display: flex; flex-direction: column; gap: 6px; padding: 10px 0; border-top: 1px solid var(--line); }
+.live__head { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; font-size: 13px; }
+.live .mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+.live__head .mono:first-child { font-size: 14px; }
+.live__country { color: var(--muted); }
+.live__tag {
+  padding: 1px 7px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--muted);
+  font-size: 11px;
+}
+.live__stats { margin-left: auto; color: var(--muted); font-size: 12px; }
+.live__track { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 10px; font-size: 12px; font-weight: 700; color: var(--muted); }
+.live__bar {
+  position: relative;
+  height: 4px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--accent) var(--p), var(--surface-2) var(--p));
+}
+.live__plane {
+  position: absolute;
+  top: 50%;
+  left: var(--p);
+  color: var(--accent);
+  font-size: 15px;
+  line-height: 1;
+  transform: translate(-50%, -55%);
+  transition: left .6s ease;
+}
+.live__meta { color: var(--muted); font-size: 12px; }
+.live .note a { color: inherit; }
+
 .included { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
 .included ul { margin: 6px 0 0; padding-left: 18px; }
 .included li { margin: 3px 0; }
