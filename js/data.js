@@ -63,7 +63,7 @@ const TOURS = [
     coords: [38.64,34.83], // harita: [enlem, boylam]
     city: "Nevşehir",
     scope: "yurtici",
-    img: "", // görsel: ör. "images/kapadokya.jpg"
+    img: "images/kap.jpg", // görsel: ör. "images/kapadokya.jpg"
     featured: true,
     promo: "Balon sezonu açıldı",
     title: "Kapadokya Balon & Vadiler",
