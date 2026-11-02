@@ -159,3 +159,8 @@ Depoda **Settings → Secrets and variables → Actions → New repository secre
 
 - Claude'da yayımlanan önizleme dış adreslere bağlanamaz; orada site her zaman gömülü veriyi gösterir.
 - Bağlantı dizesi ve dağıtım belirteci yalnızca Azure'daki uygulama ayarlarında ve kendi terminalinizde durur; depoya eklemeyin (`api/local.settings.json` `.gitignore`'dadır).
+
+## Katkıda Bulunanlar
+
+- Buğra Yiğit Şenefe: Full-Stack Geliştirici
+- Claude: Otomasyon

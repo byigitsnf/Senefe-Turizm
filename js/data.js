@@ -63,7 +63,7 @@ const TOURS = [
     coords: [38.64,34.83], // harita: [enlem, boylam]
     city: "Nevşehir",
     scope: "yurtici",
-    img: "images/kap.jpg", // görsel: ör. "images/kapadokya.jpg"
+    img: "images/kap.jpg", 
     featured: true,
     promo: "Balon sezonu açıldı",
     title: "Kapadokya Balon & Vadiler",
@@ -92,7 +92,7 @@ const TOURS = [
     coords: [40.98,40.54], // harita: [enlem, boylam]
     city: "Trabzon",
     scope: "yurtici",
-    img: "", // görsel: ör. "images/karadeniz.jpg"
+    img: "images/kdz.jpg", 
     title: "Karadeniz Yaylalar & Batum",
     region: "Trabzon · Rize · Artvin",
     from: "SAW", to: "TZX",
@@ -121,7 +121,7 @@ const TOURS = [
     coords: [36.62,29.12], // harita: [enlem, boylam]
     city: "Fethiye",
     scope: "yurtici",
-    img: "", // görsel: ör. "images/likya.jpg"
+    img: "images/lik.jpg", 
     title: "Likya Yolu & Kelebekler Vadisi",
     region: "Fethiye · Kaş",
     from: "SAW", to: "DLM",
@@ -149,7 +149,7 @@ const TOURS = [
     coords: [37.31,40.74], // harita: [enlem, boylam]
     city: "Mardin",
     scope: "yurtici",
-    img: "", // görsel: ör. "images/mardin.jpg"
+    img: "images/gap.jpg", 
     title: "Mardin, Midyat & Göbeklitepe",
     region: "Mardin · Şanlıurfa",
     from: "SAW", to: "MQM",
@@ -177,7 +177,7 @@ const TOURS = [
     coords: [40.60,43.10], // harita: [enlem, boylam]
     city: "Kars",
     scope: "yurtici",
-    img: "", // görsel: ör. "images/kars.jpg"
+    img: "images/dex.jpg", 
     title: "Turistik Doğu Ekspresi & Kars",
     region: "Ankara · Kars",
     from: "ANK", to: "KSY",
@@ -202,7 +202,7 @@ const TOURS = [
     coords: [41.25,32.69], // harita: [enlem, boylam]
     city: "Safranbolu",
     scope: "yurtici",
-    img: "", // görsel: ör. "images/safranbolu.jpg"
+    img: "images/saf.jpg", 
     title: "Safranbolu & Amasra Hafta Sonu",
     region: "Karabük · Bartın",
     from: "34", to: "78",
@@ -225,7 +225,7 @@ const TOURS = [
     coords: [38.50, 43.38], // harita: [enlem, boylam]
     city: "Van",
     scope: "yurtici",
-    img: "", // görsel: ör. "images/dogu.jpg"
+    img: "images/dgi.jpg", 
     title: "Doğunun İncileri: Erzurum, Kars & Van",
     region: "Erzurum · Kars · Ağrı · Van",
     from: "SAW", to: "ERZ",
@@ -255,7 +255,7 @@ const TOURS = [
     coords: [37.03, 27.43], // harita: [enlem, boylam]
     city: "Bodrum",
     scope: "yurtici",
-    img: "", // görsel: ör. "images/bodrum.jpg"
+    img: "images/bod.jpg", 
     title: "Bodrum Koyları & Gümüşlük",
     region: "Muğla · Bodrum",
     from: "SAW", to: "BJV",
@@ -283,7 +283,7 @@ const TOURS = [
     coords: [39.78, 30.52], // harita: [enlem, boylam]
     city: "Eskişehir",
     scope: "yurtici",
-    img: "", // görsel: ör. "images/eskisehir.jpg"
+    img: "images/esb.webp", 
     title: "Eskişehir & Bursa Hafta Sonu",
     region: "Bursa · Eskişehir",
     from: "34", to: "26",
@@ -308,7 +308,7 @@ const TOURS = [
     city: "Paris",
     continent: "avrupa",
     scope: "yurtdisi",
-    img: "", // görsel: ör. "images/paris.jpg"
+    img: "images/par.webp", 
     featured: true,
     promo: "Yılbaşı Paris'te",
     title: "Paris & Normandiya",
@@ -342,7 +342,7 @@ const TOURS = [
     city: "Roma",
     continent: "avrupa",
     scope: "yurtdisi",
-    img: "", // görsel: ör. "images/roma.jpg"
+    img: "images/ita.jpg", 
     title: "Roma, Floransa & Toskana",
     region: "İtalya",
     from: "IST", to: "FCO",
@@ -375,7 +375,7 @@ const TOURS = [
     city: "Saraybosna",
     continent: "avrupa",
     scope: "yurtdisi",
-    img: "", // görsel: ör. "images/balkanlar.jpg"
+    img: "images/bal.jpg", 
     title: "Balkanlar: Saraybosna'dan Kotor'a",
     region: "Bosna Hersek · Karadağ · Sırbistan",
     from: "IST", to: "SJJ",
@@ -407,7 +407,7 @@ const TOURS = [
     city: "Tokyo",
     continent: "asya",
     scope: "yurtdisi",
-    img: "", // görsel: ör. "images/japonya.jpg"
+    img: "images/jpn.webp", 
     featured: true,
     promo: "Sakura dönemi",
     title: "Japonya: Tokyo, Kyoto & Fuji",
@@ -444,7 +444,7 @@ const TOURS = [
     city: "Dubai",
     continent: "asya",
     scope: "yurtdisi",
-    img: "", // görsel: ör. "images/dubai.jpg"
+    img: "images/dxb.webp", 
     featured: true,
     promo: "Kışın güneşe kaçış",
     title: "Dubai & Abu Dabi",
@@ -477,7 +477,7 @@ const TOURS = [
     city: "Batum",
     continent: "asya",
     scope: "yurtdisi",
-    img: "", // görsel: ör. "images/batum.jpg"
+    img: "images/bat.jpg", 
     title: "Batum & Tiflis Kimlikle",
     region: "Gürcistan",
     from: "34", to: "GE",
@@ -507,7 +507,7 @@ const TOURS = [
     city: "Kahire",
     continent: "afrika",
     scope: "yurtdisi",
-    img: "", // görsel: ör. "images/kahire.jpg"
+    img: "images/cai.jpeg", 
     title: "Mısır: Kahire, Piramitler & Nil",
     region: "Mısır",
     from: "IST", to: "CAI",
@@ -538,7 +538,7 @@ const TOURS = [
     city: "Şarm El Şeyh",
     continent: "afrika",
     scope: "yurtdisi",
-    img: "", // görsel: ör. "images/sarm.jpg"
+    img: "images/ssh.jpg", 
     title: "Şarm El Şeyh Kızıldeniz Tatili",
     region: "Mısır · Sina",
     from: "IST", to: "SSH",
@@ -572,7 +572,7 @@ const TOURS = [
     city: "Brüksel",
     continent: "avrupa",
     scope: "yurtdisi",
-    img: "", // görsel: ör. "images/benelux.jpg"
+    img: "images/bnl.webp",
     title: "Benelüks Rüyası: Hollanda, Belçika & Lüksemburg",
     region: "Hollanda · Belçika · Lüksemburg",
     from: "IST", to: "AMS",
@@ -604,7 +604,7 @@ const TOURS = [
     city: "Münih",
     continent: "avrupa",
     scope: "yurtdisi",
-    img: "", // görsel: ör. "images/almanya.jpg"
+    img: "images/bav.webp", 
     title: "Güney Almanya: Münih, Neuschwanstein & Kara Orman",
     region: "Bavyera · Baden-Württemberg",
     from: "IST", to: "MUC",
@@ -636,7 +636,7 @@ const TOURS = [
     city: "Barselona",
     continent: "avrupa",
     scope: "yurtdisi",
-    img: "", // görsel: ör. "images/barselona.jpg"
+    img: "images/bcn.webp", 
     title: "Barselona & Katalonya",
     region: "İspanya",
     from: "IST", to: "BCN",
@@ -667,7 +667,7 @@ const TOURS = [
     city: "Santorini",
     continent: "avrupa",
     scope: "yurtdisi",
-    img: "", // görsel: ör. "images/santorini.jpg"
+    img: "images/gre.jpg", 
     featured: true,
     promo: "Ege'de 7 günlük cruise",
     title: "Yunan Adaları Cruise: Mikonos, Santorini & Atina",
@@ -717,7 +717,7 @@ const TOURS = [
     city: "Bergen",
     continent: "avrupa",
     scope: "yurtdisi",
-    img: "", // görsel: ör. "images/norvec.jpg"
+    img: "images/nor.jpg", 
     title: "Norveç Fiyortları: Oslo, Flåm & Bergen",
     region: "Norveç",
     from: "IST", to: "OSL",
@@ -750,7 +750,7 @@ const TOURS = [
     city: "Londra",
     continent: "avrupa",
     scope: "yurtdisi",
-    img: "", // görsel: ör. "images/londra.jpg"
+    img: "images/lon.jpg", 
     title: "Londra & Oxford",
     region: "Birleşik Krallık",
     from: "IST", to: "LHR",
