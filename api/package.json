@@ -1,0 +1,19 @@
+{
+  "name": "senefe-turizm-api",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Şenefe Turizm tur verisi API'si (Azure Functions + Cosmos DB)",
+  "main": "src/index.js",
+  "scripts": {
+    "export": "node ../scripts/export-catalog.js",
+    "seed": "node scripts/seed-cosmos.js",
+    "start": "func start"
+  },
+  "dependencies": {
+    "@azure/cosmos": "^4.2.0",
+    "@azure/functions": "^4.6.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

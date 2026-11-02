@@ -1,0 +1,69 @@
+# =========================================================
+# main dalına her gönderimde (push):
+#   1. js/data.js'teki turları Cosmos DB'ye aktarır (eklenen/silinen turlar dahil)
+#   2. Siteyi ve API'yi Azure Static Web Apps'e yayınlar
+#
+# Depo ayarlarında (Settings → Secrets and variables → Actions) gereken gizli değerler:
+#   COSMOS_CONNECTION_STRING          Cosmos DB → Anahtarlar → birincil bağlantı dizesi
+#   AZURE_STATIC_WEB_APPS_API_TOKEN   Static Web App → Genel bakış → Dağıtım belirtecini yönet
+# =========================================================
+
+name: Yayınla
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: # Actions sekmesinden elle çalıştırmak için
+
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+jobs:
+  seed:
+    name: Turları veritabanına aktar
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: api/package-lock.json
+
+      - name: data.js → api/seed/catalog.json
+        run: node scripts/export-catalog.js
+
+      - name: Cosmos DB'ye yükle
+        working-directory: api
+        env:
+          COSMOS_CONNECTION_STRING: ${{ secrets.COSMOS_CONNECTION_STRING }}
+        run: |
+          npm ci
+          npm run seed
+
+  deploy:
+    name: Siteyi ve API'yi yayınla
+    needs: seed
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Site dosyalarını dist/ klasörüne hazırla
+        run: |
+          node scripts/export-catalog.js
+          node scripts/build-web.js
+
+      - name: Azure Static Web Apps
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          action: upload
+          app_location: dist
+          api_location: api
+          skip_app_build: true

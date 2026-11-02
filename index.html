@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Şenefe Turizm</title>
+  <meta name="claude:viewport-fit-sides" content="cover">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap">
+  <link rel="stylesheet" href="css/style.css">
+
+  <!-- Harita kütüphaneleri (CDN) -->
+  <script src="https://cdn.jsdelivr.net/npm/d3@7.8.5/dist/d3.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/dist/topojson-client.min.js" defer></script>
+
+  <script src="js/data.js" defer></script>
+  <script src="js/api.js" defer></script>
+  <script src="js/geo/countries-50m.js" defer></script>
+  <script src="js/world-map.js" defer></script>
+  <script src="js/app.js" defer></script>
+</head>
+<body>
+
+  <!-- ===== Üst menü ===== -->
+  <header class="top">
+    <div class="wrap top__inner">
+      <a class="logo" href="#top" aria-label="Şenefe Turizm ana sayfa">
+        <svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true">
+          <circle cx="15" cy="15" r="13" fill="none" stroke="var(--accent)" stroke-width="2.5"/>
+          <path d="M15 2 C8 9 8 21 15 28 M15 2 C22 9 22 21 15 28" fill="none" stroke="var(--accent)" stroke-width="2"/>
+          <path d="M3 15 H27" stroke="var(--sun)" stroke-width="2.5"/>
+        </svg>
+        Şenefe
+      </a>
+
+      <nav class="main-nav" aria-label="Ana menü">
+        <!-- Üzerine gelince ilgili turları gösteren açılır menüler (içeriği app.js doldurur) -->
+        <div class="nav-item" data-menu="yurtici">
+          <a href="#turlar" class="nav-item__link" aria-haspopup="true">Yurtiçi Turlar</a>
+          <div class="nav-menu"></div>
+        </div>
+        <div class="nav-item" data-menu="yurtdisi">
+          <a href="#turlar" class="nav-item__link" aria-haspopup="true">Yurtdışı Turlar</a>
+          <div class="nav-menu"></div>
+        </div>
+        <div class="nav-item" data-menu="cruise">
+          <a href="#turlar" class="nav-item__link" aria-haspopup="true">Cruise Turları</a>
+          <div class="nav-menu"></div>
+        </div>
+        <a href="#vize">Vize Rehberi</a>
+        <a href="#sss">SSS</a>
+        <a href="#iletisim">İletişim</a>
+      </nav>
+
+      <button class="fav-pill" id="favToggle" type="button" aria-pressed="false" title="Sadece favorileri göster">
+        ♥ Favoriler <b id="favCount">0</b>
+      </button>
+
+      <button class="theme-switch" id="themeSwitch" type="button" role="switch" aria-checked="false" aria-label="Karanlık mod">
+        <span class="theme-switch__track"><span class="theme-switch__knob" aria-hidden="true">☀</span></span>
+        <span class="theme-switch__label">Aydınlık</span>
+      </button>
+    </div>
+  </header>
+
+  <main id="top">
+
+    <!-- ===== Giriş ve arama ===== -->
+    <div class="hero">
+      <div class="wrap">
+        <div class="eyebrow">Lorem ipsum dolor sit amet · Belge No: Lorem ipsum</div>
+
+        <form class="search" id="searchForm" role="search">
+          <div class="world-map" id="worldMap"></div>
+          <div class="map-legend" aria-hidden="true">
+            <span><i class="map-legend__home"></i>Buradasınız</span>
+            <span><i class="map-legend__domestic"></i>Yurt içi turlar</span>
+            <span><i class="map-legend__intl"></i>Yurt dışı turlar</span>
+          </div>
+          <div class="map-tooltip" id="mapTooltip" role="tooltip" hidden></div>
+          <div class="segmented" role="group" aria-label="Tur tipi">
+            <button type="button" data-scope="all" aria-pressed="true">Tümü</button>
+            <button type="button" data-scope="yurtici" aria-pressed="false">Yurt İçi</button>
+            <button type="button" data-scope="yurtdisi" aria-pressed="false">Yurt Dışı</button>
+          </div>
+          <div class="chip-row" id="transportBar" role="group" aria-label="Ulaşım türü">
+            <button type="button" data-transport="" aria-pressed="true">Tüm ulaşım</button>
+            <button type="button" data-transport="Uçak" aria-pressed="false">✈ Uçak</button>
+            <button type="button" data-transport="Otobüs" aria-pressed="false">🚌 Otobüs</button>
+            <button type="button" data-transport="Gemi" aria-pressed="false">🛳 Gemi</button>
+          </div>
+          <div class="chip-row" id="continentBar" role="group" aria-label="Kıta seç" hidden></div>
+          <div class="search__row">
+            <div class="field">
+              <label for="q">Nereye?</label>
+              <input class="input" id="q" placeholder="Şehir, ülke veya tur adı — ör. Paris, Karadeniz" autocomplete="off">
+            </div>
+            <div class="field">
+              <label for="month">Ne zaman?</label>
+              <select class="input" id="month"><option value="">Tüm tarihler</option></select>
+            </div>
+            <div class="field">
+              <label for="duration">Süre</label>
+              <select class="input" id="duration">
+                <option value="">Farketmez</option>
+                <option value="1-3">1–3 gece</option>
+                <option value="4-6">4–6 gece</option>
+                <option value="7-99">7+ gece</option>
+              </select>
+            </div>
+            <button class="btn" type="submit">Tur Ara</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- ===== Tur listesi ===== -->
+    <section id="turlar">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow" id="scopeLabel">Tüm turlar</div>
+            <h2>Öne Çıkan Turlar</h2>
+          </div>
+          <div class="section-head__tools">
+            <span class="count" id="resultCount"></span>
+            <div class="field field--inline">
+              <label for="sort">Sırala</label>
+              <select class="input" id="sort">
+                <option value="date">En yakın kalkış</option>
+                <option value="priceAsc">Fiyat (artan)</option>
+                <option value="priceDesc">Fiyat (azalan)</option>
+                <option value="nights">Süre</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Öne çıkan turlar slaytı (data.js'te featured: true olan turlar) -->
+        <div class="promo" id="promo" role="region" aria-roledescription="carousel" aria-label="Öne çıkan turlar">
+          <div class="promo__viewport">
+            <div class="promo__track" id="promoTrack"></div>
+          </div>
+          <button class="promo__nav promo__nav--prev" id="promoPrev" type="button" aria-label="Önceki tur">‹</button>
+          <button class="promo__nav promo__nav--next" id="promoNext" type="button" aria-label="Sonraki tur">›</button>
+          <div class="promo__dots" id="promoDots" role="group" aria-label="Slayt seç"></div>
+        </div>
+
+        <div class="tours-layout">
+          <aside class="filters" aria-label="Filtreler">
+            <div>
+              <h3>Ulaşım</h3>
+              <label class="check"><input type="checkbox" name="transport" value="Uçak" checked> Uçaklı</label>
+              <label class="check"><input type="checkbox" name="transport" value="Otobüs" checked> Otobüslü</label>
+              <label class="check"><input type="checkbox" name="transport" value="Tren" checked> Trenli</label>
+              <label class="check"><input type="checkbox" name="transport" value="Gemi" checked> Gemili (cruise)</label>
+            </div>
+            <div>
+              <h3>Vize</h3>
+              <label class="check"><input type="checkbox" id="visaFree"> Sadece vizesiz / kimlikle</label>
+            </div>
+            <div>
+              <h3>Bütçe (kişi başı, ₺ karşılığı)</h3>
+              <input type="range" id="budget" min="5000" max="120000" step="5000" value="120000" aria-describedby="budgetValue">
+              <div class="range-value" id="budgetValue"></div>
+            </div>
+            <button class="btn btn--ghost" type="button" id="resetFilters">Filtreleri temizle</button>
+          </aside>
+
+          <div class="tour-grid" id="tourGrid" aria-live="polite"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Vize rehberi ===== -->
+    <section id="vize" class="band">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">Yurt dışı turlar için</div>
+            <h2>Vize rehberi</h2>
+          </div>
+          <p class="section-head__note">Vizeli turlarda randevu, evrak listesi ve başvuru takibini biz yapıyoruz. Bordo (umuma mahsus) pasaport sahipleri için genel durum:</p>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Ülke</th><th>Durum</th><th>Ortalama süre</th><th>Gerekli belgeler</th><th>Son başvuru</th></tr>
+            </thead>
+            <tbody id="visaRows"></tbody>
+          </table>
+        </div>
+        <p class="note">Bilgiler örnektir ve değişebilir. Seyahatten önce ilgili konsolosluktan güncel durumu teyit edin.</p>
+      </div>
+    </section>
+
+    <!-- ===== Neden biz ===== -->
+    <section>
+      <div class="wrap stats">
+        <div><b>1998</b><p>Yılından beri TÜRSAB üyesi, A grubu seyahat acentası.</p></div>
+        <div><b>%96</b><p>Schengen başvurularında 2025 onay oranımız (örnek veri).</p></div>
+        <div><b>7/24</b><p>Tur boyunca Türkçe acil destek hattı.</p></div>
+        <div><b>%30</b><p>Peşinatla yer ayırtın, kalanını kalkıştan 21 gün önce ödeyin.</p></div>
+      </div>
+    </section>
+
+    <!-- ===== SSS ve iletişim ===== -->
+    <section id="sss" class="section--flush-top">
+      <div class="wrap two-col">
+        <div>
+          <div class="eyebrow">Sıkça sorulanlar</div>
+          <h2 class="faq-title">Rezervasyondan önce</h2>
+          <details><summary>Fiyatlara neler dahil?</summary><p>Her turun detayında "Dahil / Hariç" sekmesinde listelenir. Genelde ulaşım, konaklama, kahvaltı ve rehberlik dahildir; müze girişleri ve ekstra turlar hariçtir.</p></details>
+          <details><summary>Tek kişilik oda farkı ne kadar?</summary><p>Tek kişilik oda için kişi başı fiyata %40 fark eklenir. 2–11 yaş çocuklar, iki yetişkinin yanında %50 indirimlidir.</p></details>
+          <details><summary>Vize reddedilirse ne olur?</summary><p>Ret belgesini ibraz ederseniz konsolosluk ücreti ve hizmet bedeli dışındaki tutarın tamamı iade edilir.</p></details>
+          <details><summary>İptal koşulları nelerdir?</summary><p>Kalkıştan 30 gün öncesine kadar ücretsiz iptal. 29–15 gün arası %50, son 14 gün içinde iade yapılmaz.</p></details>
+          <details><summary>Yurt dışı çıkış harcını kim öder?</summary><p>Yurt dışı çıkış harcı yolcuya aittir ve fiyata dahil değildir.</p></details>
+        </div>
+
+        <div id="iletisim" class="contact-card">
+          <div>
+            <div class="eyebrow">İletişim</div>
+            <h2 class="contact-card__title">Size özel rota isteyin</h2>
+          </div>
+          <div class="copy-line">+90 212 000 00 00 <button type="button" data-copy="+90 212 000 00 00">Kopyala</button></div>
+          <div class="copy-line">rezervasyon@senefe.example <button type="button" data-copy="rezervasyon@senefe.example">Kopyala</button></div>
+
+          <form id="contactForm" class="form-grid" novalidate>
+            <div class="field"><label for="contactName">Ad soyad</label><input class="input" id="contactName" autocomplete="name"></div>
+            <div class="field"><label for="contactPhone">Telefon</label><input class="input" id="contactPhone" type="tel" autocomplete="tel"></div>
+            <div class="field form-grid__full">
+              <label for="contactType">Talep türü</label>
+              <select class="input" id="contactType">
+                <option>Yurt içi grup turu</option>
+                <option>Yurt dışı paket tur</option>
+                <option>Balayı</option>
+                <option>Kurumsal / MICE</option>
+                <option>Sadece vize danışmanlığı</option>
+              </select>
+            </div>
+            <div class="field form-grid__full">
+              <label for="contactMessage">Mesajınız</label>
+              <textarea class="input" id="contactMessage" rows="3" placeholder="Tarih aralığı, kişi sayısı, bütçe…"></textarea>
+            </div>
+            <div class="form-grid__full form-actions">
+              <span class="error" id="contactError"></span>
+              <button class="btn" type="submit">Talep gönder</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap footer__inner">
+      <span>© 2026 Şenefe Turizm · TÜRSAB Belge No: A-0000</span>
+      <span>Demo site: formlar hiçbir yere gönderilmez.</span>
+    </div>
+  </footer>
+
+  <!-- Tur detayı paneli (app.js doldurur) -->
+  <div class="overlay" id="overlay" hidden>
+    <div class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle"></div>
+  </div>
+
+  <div class="toast" id="toast" hidden></div>
+</body>
+</html>

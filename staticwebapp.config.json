@@ -1,0 +1,9 @@
+{
+  "platform": {
+    "apiRuntime": "node:20"
+  },
+  "routes": [
+    { "route": "/js/*", "headers": { "Cache-Control": "public, max-age=300" } },
+    { "route": "/css/*", "headers": { "Cache-Control": "public, max-age=300" } }
+  ]
+}
