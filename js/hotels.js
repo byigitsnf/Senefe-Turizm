@@ -111,7 +111,7 @@ function renderHotelResults() {
   const status = $("#hotelStatus");
   const grid = $("#hotelGrid");
 
-  if (document.documentElement.dataset.dataSource === "embedded") {
+  if (!SERVED_FROM_SERVER) {
     status.textContent = "Otel araması için sitenin sunucu üzerinden açılması gerekir.";
     grid.innerHTML = "";
     return;

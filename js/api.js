@@ -9,14 +9,21 @@
    ========================================================= */
 
 const API_BASE = window.SENEFE_API_BASE ?? "/api";
-const API_TIMEOUT_MS = 4000;
+// Azure Functions uyurken ilk istek 5–6 sn sürebilir (soğuk başlangıç).
+const API_TIMEOUT_MS = 9000;
+
+/**
+ * Site bir sunucudan açıldıysa true. Katalog isteği zaman aşımına uğrasa bile
+ * API'yi kullanan özellikler (uçuş takibi, oteller) kendi isteklerini dener.
+ */
+const SERVED_FROM_SERVER = location.protocol !== "file:";
 
 /**
  * Katalog verisini API'den alıp data.js'teki dizileri yerinde günceller.
  * Döndürdüğü değer verinin kaynağıdır: "cosmos", "memory" (API'nin yerel verisi) ya da "embedded".
  */
 async function loadCatalog() {
-  if (location.protocol === "file:") return "embedded";
+  if (!SERVED_FROM_SERVER) return "embedded";
 
   try {
     const response = await fetch(`${API_BASE}/catalog`, { signal: AbortSignal.timeout(API_TIMEOUT_MS) });

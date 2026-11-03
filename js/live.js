@@ -58,7 +58,7 @@ function liveBodyHTML(tour) {
       <span class="live__route">İstanbul → ${outbound.toName}</span>
     </div>`;
 
-  if (document.documentElement.dataset.dataSource === "embedded") {
+  if (!SERVED_FROM_SERVER) {
     return `${title}<p class="note">Canlı uçuş verisi için sitenin sunucu üzerinden açılması gerekir.</p>`;
   }
   const current = live.tourId === tour.id;
@@ -115,7 +115,7 @@ async function refreshLiveTracking() {
 
 /** Çekmece her çizildiğinde çağrılır: takip paneli görünüyorsa yenilemeyi başlatır, değilse durdurur. */
 function syncLiveTracking() {
-  const visible = Boolean($("#liveTracking")) && document.documentElement.dataset.dataSource !== "embedded";
+  const visible = Boolean($("#liveTracking")) && SERVED_FROM_SERVER;
   if (!visible) return stopLiveTracking();
   if (live.tourId === activeTour.id) return;
 
