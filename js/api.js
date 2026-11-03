@@ -1,14 +1,14 @@
 /* =========================================================
-   Şenefe Turizm — canlı veri
+   OTA Web App — canlı veri
    Site açılırken tur verisini API'den (Azure Functions + Cosmos DB) ister.
    API'ye ulaşılamazsa (dosyadan açıldığında, Claude önizlemesinde ya da
    sunucu kapalıyken) data.js içindeki gömülü veriyle devam eder.
 
    API adresini değiştirmek için index.html'de bu dosyadan önce:
-     <script>window.SENEFE_API_BASE = "https://<site>.azurestaticapps.net/api";</script>
+     <script>window.OTA_API_BASE = "https://<site>.azurestaticapps.net/api";</script>
    ========================================================= */
 
-const API_BASE = window.SENEFE_API_BASE ?? "/api";
+const API_BASE = window.OTA_API_BASE ?? "/api";
 // Azure Functions uyurken ilk istek 5–6 sn sürebilir (soğuk başlangıç).
 const API_TIMEOUT_MS = 9000;
 

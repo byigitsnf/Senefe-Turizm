@@ -97,5 +97,5 @@ http
   })
   .listen(PORT, () => {
     const source = process.env.COSMOS_CONNECTION_STRING ? "Cosmos DB" : "api/seed/catalog.json";
-    console.log(`Şenefe Turizm → http://localhost:${PORT}  (veri: ${source})`);
+    console.log(`OTA Web App → http://localhost:${PORT}  (veri: ${source})`);
   });

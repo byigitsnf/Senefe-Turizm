@@ -292,7 +292,7 @@ async function book(body) {
     method: "POST",
     body: {
       prebookId,
-      clientReference: `SNF-${Date.now().toString(36).toUpperCase()}`,
+      clientReference: `OTA-${Date.now().toString(36).toUpperCase()}`,
       holder,
       guests: [{ occupancyNumber: 1, ...holder }],
       payment: { method: "ACC_CREDIT_CARD" }

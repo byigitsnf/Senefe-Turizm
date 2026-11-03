@@ -1,8 +1,8 @@
 {
-  "name": "senefe-turizm-api",
+  "name": "ota-web-app-api",
   "version": "1.0.0",
   "private": true,
-  "description": "Şenefe Turizm tur verisi API'si (Azure Functions + Cosmos DB)",
+  "description": "OTA Web App tur verisi API'si (Azure Functions + Cosmos DB)",
   "main": "src/index.js",
   "scripts": {
     "export": "node ../scripts/export-catalog.js",

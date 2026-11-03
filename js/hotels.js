@@ -1,5 +1,5 @@
 /* =========================================================
-   Şenefe Turizm — Oteller (LiteAPI sandbox)
+   OTA Web App — Oteller (LiteAPI sandbox)
    Tur dışında otel araması ve rezervasyonu. Akış:
      arama → otel paneli ve odalar → ön rezervasyon (fiyat doğrulama)
      → misafir bilgisi → rezervasyon onayı

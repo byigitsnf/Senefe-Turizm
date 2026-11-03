@@ -1,5 +1,5 @@
 /* =========================================================
-   Şenefe Turizm — etkileşimli noktalı dünya haritası
+   OTA Web App — etkileşimli noktalı dünya haritası
    Ülke sınırları geo/countries-50m.js'ten (Natural Earth) gelir,
    çizim ve yakınlaştırma d3 + topojson-client ile yapılır.
    Kara, ekrandaki boyuta göre noktalara çevrilir; yakınlaştırınca

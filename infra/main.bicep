@@ -1,5 +1,5 @@
 // =========================================================
-// Şenefe Turizm — Azure kaynakları (ücretsiz katmanlar)
+// OTA Web App — Azure kaynakları (ücretsiz katmanlar)
 //   • Azure Cosmos DB for NoSQL, ücretsiz katman (1000 RU/s + 25 GB)
 //     veritabanı "senefe", kapsayıcılar "tours" (/scope) ve "meta" (/id)
 //   • Azure Static Web Apps, Free plan: site + yönetilen Functions API

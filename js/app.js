@@ -1,5 +1,5 @@
 /* =========================================================
-   Şenefe Turizm — uygulama mantığı
+   OTA Web App — uygulama mantığı
    Veriler api.js üzerinden API'den, ulaşılamazsa data.js'ten (TOURS, VISA_INFO, EUR_TO_TRY), harita world-map.js'ten gelir.
    1. Yardımcılar        5. Tur detay paneli ve rezervasyon
    2. Uygulama durumu    6. İletişim, kopyalama, bildirim
@@ -36,7 +36,7 @@ const storage = {
   }
 };
 
-const STORAGE_KEYS = { favorites: "snf-favs", theme: "snf-theme" };
+const STORAGE_KEYS = { favorites: "ota-favs", theme: "ota-theme" };
 
 const PHONE_PATTERN = /^[0-9 +()-]{10,}$/;
 const EMAIL_PATTERN = /^\S+@\S+\.\S+$/;
@@ -1059,7 +1059,7 @@ function validateBooking({ name, phone, email }) {
 
 function createConfirmationCode(tour) {
   const random = Math.random().toString(36).slice(2, 7).toUpperCase();
-  return `SNF-${tour.to}-${random}`;
+  return `OTA-${tour.to}-${random}`;
 }
 
 function bindDrawerEvents() {

@@ -1,5 +1,5 @@
 /* =========================================================
-   Şenefe Turizm — içerik verisi
+   OTA Web App — içerik verisi
    Turları, fiyatları ve vize bilgilerini yalnızca bu dosyadan düzenleyin.
    Site API'ye bağlıyken veriler Cosmos DB'den gelir; bu dosya yedek veridir.
    Değişiklikleri veritabanına aktarmak için: npm run export, ardından api'de npm run seed.

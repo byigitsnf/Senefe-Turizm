@@ -1,5 +1,5 @@
 /* =========================================================
-   Şenefe Turizm — stil dosyası
+   OTA Web App — stil dosyası
    Düzen: biniş kartı metaforu; turlar rota kodlu bilet kartları.
    1. Tema değişkenleri   5. Arama
    2. Temel              6. Tur listesi ve kartlar
@@ -236,6 +236,7 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
   letter-spacing: -.02em;
   color: var(--fg);
   text-decoration: none;
+  white-space: nowrap;
 }
 .logo svg { flex: none; }
 

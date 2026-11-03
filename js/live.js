@@ -1,5 +1,5 @@
 /* =========================================================
-   Şenefe Turizm — anlık uçuş takibi
+   OTA Web App — anlık uçuş takibi
    Tur detayındaki Uçuş sekmesinde, turun uçuş hattında şu an havada olan
    İstanbul kalkışlı uçakları gösterir. Veri /api/live/{tur} ucundan
    (OpenSky Network) gelir; sekme açıkken 30 saniyede bir yenilenir.
