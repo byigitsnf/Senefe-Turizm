@@ -1110,6 +1110,83 @@ details p { margin: 8px 0 0; color: var(--muted); }
 .footer__inner { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px; }
 
 
+/* ---------- Oteller (hotels.js) ---------- */
+
+.hotel-search {
+  display: grid;
+  grid-template-columns: 2fr repeat(3, 1fr) auto;
+  align-items: end;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+.hotel-status { min-height: 20px; margin: 16px 0 14px; }
+.hotel-badge {
+  margin-left: 6px;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--warn) 18%, transparent);
+  color: var(--warn);
+  font-size: 11px;
+  font-weight: 700;
+}
+.hotel-card__photo,
+.hotel-cover {
+  justify-content: flex-end;
+  background: linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent) 40%, #000)) center / cover;
+}
+.hotel-card__photo[style],
+.hotel-cover[style] { background-size: cover; background-position: center; }
+.hotel-card .meta span { min-width: 0; overflow-wrap: anywhere; }
+.hotel-card__board { color: var(--muted); font-size: 13px; }
+.hotel-card .price { text-align: right; }
+
+.drawer .hotel-cover { height: 220px; }
+.hotel-gallery {
+  display: flex;
+  gap: 6px;
+  padding: 6px 22px 0;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+.hotel-gallery img { flex: none; width: 96px; height: 64px; border-radius: 6px; object-fit: cover; }
+
+.hotel-rooms { display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; }
+.hotel-room {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  padding: 14px 0;
+  border-top: 1px solid var(--line);
+}
+.hotel-room > div:first-child { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.hotel-room__buy { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; text-align: right; }
+.hotel-room__buy .price { font-size: 20px; }
+.hotel-room__buy small { color: var(--muted); font-size: 11px; }
+.hotel-room__ok { color: var(--ok); font-size: 13px; }
+.hotel-room__no { color: var(--muted); font-size: 13px; }
+.hotel-warn {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--warn) 14%, transparent);
+  color: var(--warn);
+  font-size: 13px;
+}
+.hotel-about p { font-size: 14px; }
+.hotel-facilities { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 0; padding: 0; list-style: none; }
+.hotel-facilities li { padding: 3px 9px; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); font-size: 12px; }
+.link-button { padding: 0; border: 0; background: none; color: var(--accent); font: inherit; text-decoration: underline; cursor: pointer; }
+
+@media (max-width: 760px) {
+  .hotel-search { grid-template-columns: 1fr 1fr; }
+  .hotel-search .field:first-child,
+  .hotel-search .btn { grid-column: 1 / -1; }
+}
+
+
 /* ---------- 8. Tur detay paneli ---------- */
 
 .overlay {

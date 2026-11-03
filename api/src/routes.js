@@ -7,11 +7,16 @@
    GET /api/tours/{id}     Tek tur
    GET /api/visa           Vize rehberi
    GET /api/live/{id}      Turun uçuş hattında şu an havada olan İstanbul kalkışlı uçaklar (OpenSky)
+   GET /api/hotels         Otel arama; ?lat=&lon=&checkin=&checkout=&adults= (LiteAPI)
+   GET /api/hotels/{id}    Otel bilgisi ve oda seçenekleri; aynı tarih parametreleriyle
+   POST /api/hotels/prebook  { offerId } → fiyat ve müsaitlik doğrulaması
+   POST /api/hotels/book     { prebookId, firstName, lastName, email } → rezervasyon (sandbox)
    GET /api/health         Hangi veri kaynağının kullanıldığı
    ========================================================= */
 
 const { getStore } = require("./store");
 const { liveFlightsTo, hasCredentials, OpenSkyError } = require("./opensky");
+const hotels = require("./liteapi");
 
 const ok = (body) => ({ status: 200, body });
 const notFound = (message) => ({ status: 404, body: { error: message } });
@@ -56,17 +61,29 @@ async function liveFlights(_query, { id }) {
   }
 }
 
+/** LiteAPI hatalarını kullanıcıya gösterilecek mesajla döndürür. */
+const hotelRoute = (run) => async (query, params, body) => {
+  try {
+    return ok(await run(query, params, body));
+  } catch (error) {
+    if (!(error instanceof hotels.LiteApiError)) throw error;
+    return { status: error.status, body: { error: error.message } };
+  }
+};
+
 async function health() {
   return ok({
     status: "ok",
     source: getStore().source,
     opensky: hasCredentials() ? "hesap" : "hesapsız",
+    hotels: hotels.hotelsStatus(),
     time: new Date().toISOString()
   });
 }
 
 /**
- * route: Azure Functions rota şablonu; handler: (query, params) => Promise<{status, body}>
+ * route: Azure Functions rota şablonu; handler: (query, params, body) => Promise<{status, body}>
+ * method: "GET" (varsayılan) ya da "POST"; POST yanıtları önbelleğe alınmaz
  * maxAge: tarayıcı önbellek süresi (sn), verilmezse 60
  */
 const ROUTES = [
@@ -75,6 +92,10 @@ const ROUTES = [
   { name: "tour", route: "tours/{id}", handler: getTour },
   { name: "visa", route: "visa", handler: visa },
   { name: "live", route: "live/{id}", handler: liveFlights, maxAge: 15 },
+  { name: "hotelSearch", route: "hotels", handler: hotelRoute(hotels.searchHotels), maxAge: 120 },
+  { name: "hotelPrebook", route: "hotels/prebook", method: "POST", handler: hotelRoute((_q, _p, body) => hotels.prebook(body)) },
+  { name: "hotelBook", route: "hotels/book", method: "POST", handler: hotelRoute((_q, _p, body) => hotels.book(body)) },
+  { name: "hotel", route: "hotels/{id}", handler: hotelRoute(hotels.getHotel), maxAge: 120 },
   { name: "health", route: "health", handler: health }
 ];
 

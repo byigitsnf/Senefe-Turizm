@@ -9,11 +9,13 @@ index.html, css/, js/        Site (ön yüz)
   js/data.js                 Gömülü yedek veri; API'ye ulaşılamazsa kullanılır
   js/api.js                  Açılışta /api/catalog'dan veriyi çeker
   js/live.js                 Uçuş sekmesindeki anlık uçuş takibi
+  js/hotels.js               Oteller: arama, oda seçimi, rezervasyon
 api/                         Azure Functions (Node.js) API
   src/routes.js              API uçları
   src/store.js               Cosmos DB ya da yerel JSON veri katmanı
   src/opensky.js             OpenSky Network'ten canlı uçak konumları
   src/airports.js            Havalimanı koordinatları ve havayolu adları
+  src/liteapi.js             LiteAPI (Nuitee Connect) otel arama ve rezervasyon
   seed/catalog.json          Test verisi (data.js'ten üretilir)
   scripts/seed-cosmos.js     Test verisini Cosmos DB'ye yükler
 infra/main.bicep             Azure kaynakları (ücretsiz katmanlar)
@@ -46,7 +48,34 @@ Abonelik başına yalnızca **bir** Cosmos DB hesabı ücretsiz katmanda olabili
 | `GET /api/tours/{id}` | Tek tur, ör. `/api/tours/par` |
 | `GET /api/visa` | Vize rehberi |
 | `GET /api/live/{id}` | Turun uçuş hattında şu an havada olan İstanbul kalkışlı uçaklar, ör. `/api/live/par` |
-| `GET /api/health` | Veri kaynağı (`cosmos` ya da `memory`) ve OpenSky bağlantı türü |
+| `GET /api/hotels?lat=&lon=&checkin=&checkout=&adults=` | Konumun çevresindeki oteller, en düşük toplam fiyatla |
+| `GET /api/hotels/{id}?checkin=&checkout=&adults=` | Otel bilgisi ve oda seçenekleri |
+| `POST /api/hotels/prebook` | `{ offerId }`: seçilen odanın fiyatını ve müsaitliğini doğrular |
+| `POST /api/hotels/book` | `{ prebookId, firstName, lastName, email }`: rezervasyon (yalnızca sandbox) |
+| `GET /api/health` | Veri kaynağı (`cosmos` ya da `memory`), OpenSky bağlantı türü ve otel servisi durumu |
+
+## Oteller
+
+Menüdeki **Oteller** bölümünde tur dışında otel aranır ve rezerve edilir. Veri [LiteAPI (Nuitee Connect)](https://docs.liteapi.travel/docs/booking-a-room) sandbox'ından gelir:
+
+1. Şehir ve tarihler seçilir; çevredeki oteller en düşük toplam fiyatla listelenir (`/hotels/rates`).
+2. Otel açılınca fotoğraflar, bilgiler ve tüm oda seçenekleri gelir (`/data/hotel`).
+3. **Seç**'e basınca fiyat ve müsaitlik son kez doğrulanır (`/rates/prebook`).
+4. Ad, soyad ve e-posta ile rezervasyon tamamlanır (`/rates/book`). Ödeme sandbox kartıyla simüle edilir; rezervasyonlar Nuitee panelinde **Sandbox** modunda **Bookings** altında görünür.
+
+Anahtar yalnızca sunucudadır:
+
+- **Yerelde:** proje kökünde `.env` dosyasına `LITEAPI_KEY=sand_…` satırını yazın, `npm run dev` ile başlatın. `.env` depoya eklenmez ve yerel sunucu bu dosyayı tarayıcıya sunmaz.
+- **Azure'da:** Static Web App → **Ayarlar → Ortam değişkenleri → Production**'a `LITEAPI_KEY` ekleyip **Uygula**'ya basın. `/api/health` yanıtında `"hotels": "sandbox"` görünmelidir.
+
+Rezervasyon ucu yalnızca `sand_` ile başlayan anahtarla çalışır. Canlı (`prod_`) anahtarla `ACC_CREDIT_CARD` ödemesi hesaba tanımlı kartı gerçekten tahsil ettiği için, canlıda rezervasyon ancak `LITEAPI_ALLOW_LIVE_BOOKING=true` tanımlanırsa açılır; bunu gerçek bir ödeme akışı kurmadan yapmayın.
+
+### Kapatma ve geri alma
+
+Tamamı tek bir commit'te (`hotels-liteapi` etiketi) durur.
+
+- **Geçici olarak gizlemek:** `js/hotels.js` içinde `HOTELS_ENABLED = false` yapıp gönderin. Bölüm ve menü bağlantısı kaybolur, API uçları yerinde kalır.
+- **Tamamen kaldırmak:** `git revert hotels-liteapi` ve ardından `git push`.
 
 ## Anlık uçuş takibi
 

@@ -21,6 +21,7 @@
   <script src="js/geo/countries-50m.js" defer></script>
   <script src="js/world-map.js" defer></script>
   <script src="js/app.js" defer></script>
+  <script src="js/hotels.js" defer></script>
 </head>
 <body>
 
@@ -50,6 +51,7 @@
           <a href="#turlar" class="nav-item__link" aria-haspopup="true">Cruise Turları</a>
           <div class="nav-menu"></div>
         </div>
+        <a href="#oteller" id="navHotels" hidden>Oteller</a>
         <a href="#vize">Vize Rehberi</a>
         <a href="#sss">SSS</a>
         <a href="#iletisim">İletişim</a>
@@ -175,6 +177,47 @@
       </div>
     </section>
 
+    <!-- ===== Oteller (hotels.js doldurur; HOTELS_ENABLED kapalıysa gizli kalır) ===== -->
+    <section id="oteller" hidden>
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">Tur dışında konaklama</div>
+            <h2>Oteller</h2>
+          </div>
+          <p class="section-head__note">Sadece otel mi lazım? Şehri ve tarihleri seçin, güncel oda fiyatlarını görün ve rezervasyonu buradan tamamlayın.</p>
+        </div>
+
+        <form class="hotel-search" id="hotelSearch" role="search">
+          <div class="field">
+            <label for="hotelDest">Şehir</label>
+            <select class="input" id="hotelDest"></select>
+          </div>
+          <div class="field">
+            <label for="hotelCheckin">Giriş</label>
+            <input class="input" id="hotelCheckin" type="date" required>
+          </div>
+          <div class="field">
+            <label for="hotelCheckout">Çıkış</label>
+            <input class="input" id="hotelCheckout" type="date" required>
+          </div>
+          <div class="field">
+            <label for="hotelAdults">Yetişkin</label>
+            <select class="input" id="hotelAdults">
+              <option value="1">1</option>
+              <option value="2" selected>2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+            </select>
+          </div>
+          <button class="btn" type="submit">Otel Ara</button>
+        </form>
+
+        <p class="count hotel-status" id="hotelStatus" aria-live="polite"></p>
+        <div class="tour-grid" id="hotelGrid"></div>
+      </div>
+    </section>
+
     <!-- ===== Vize rehberi ===== -->
     <section id="vize" class="band">
       <div class="wrap">
@@ -265,6 +308,11 @@
   <!-- Tur detayı paneli (app.js doldurur) -->
   <div class="overlay" id="overlay" hidden>
     <div class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle"></div>
+  </div>
+
+  <!-- Otel paneli (hotels.js doldurur) -->
+  <div class="overlay" id="hotelOverlay" hidden>
+    <div class="drawer" id="hotelDrawer" role="dialog" aria-modal="true" aria-labelledby="hotelTitle"></div>
   </div>
 
   <div class="toast" id="toast" hidden></div>
