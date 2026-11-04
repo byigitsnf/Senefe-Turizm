@@ -11,9 +11,14 @@ for (const { name, route, handler, method = "GET", maxAge = 60 } of ROUTES) {
     handler: async (request, context) => {
       try {
         const input = method === "POST" ? await request.json().catch(() => ({})) : undefined;
-        const { status, body } = await handler(Object.fromEntries(request.query), request.params, input);
-        const cacheControl = method === "GET" && status === 200 ? `public, max-age=${maxAge}` : "no-store";
-        return { status, jsonBody: body, headers: { "Cache-Control": cacheControl } };
+        const headers = Object.fromEntries(request.headers);
+        const ip = (headers["x-azure-clientip"] ?? headers["x-forwarded-for"] ?? "?").split(",")[0].trim();
+        const result = await handler(Object.fromEntries(request.query), request.params, input, { headers, ip });
+        const { status, body, raw, contentType, cacheControl } = result;
+        const fallback = method === "GET" && status === 200 ? `public, max-age=${maxAge}` : "no-store";
+        const responseHeaders = { "Cache-Control": cacheControl ?? fallback };
+        if (raw) return { status, body: raw, headers: { ...responseHeaders, "Content-Type": contentType } };
+        return { status, jsonBody: body, headers: responseHeaders };
       } catch (error) {
         context.error(error);
         return { status: 500, jsonBody: { error: "Sunucu hatası" } };

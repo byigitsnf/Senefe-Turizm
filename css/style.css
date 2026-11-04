@@ -1188,6 +1188,84 @@ details p { margin: 8px 0 0; color: var(--muted); }
 }
 
 
+/* ---------- Rota haritası (route-map.js) ---------- */
+
+.route-tab { display: flex; flex-direction: column; gap: 10px; }
+.route-map {
+  position: relative;
+  height: 340px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+}
+.route-map__message {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  margin: 0;
+  padding: 16px;
+  background: var(--surface-2);
+  color: var(--muted);
+  font-size: 14px;
+  text-align: center;
+}
+.route-map .maplibregl-popup-content { background: var(--surface); color: var(--fg); font-family: var(--font-body); font-size: 13px; font-weight: 600; }
+.route-map .maplibregl-popup-anchor-bottom .maplibregl-popup-tip { border-top-color: var(--surface); }
+.route-map .maplibregl-popup-anchor-top .maplibregl-popup-tip { border-bottom-color: var(--surface); }
+.route-map .maplibregl-popup-anchor-left .maplibregl-popup-tip { border-right-color: var(--surface); }
+.route-map .maplibregl-popup-anchor-right .maplibregl-popup-tip { border-left-color: var(--surface); }
+
+.route-pin {
+  min-width: 26px;
+  height: 26px;
+  padding: 0 7px;
+  border: 2px solid var(--surface);
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--accent-fg);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, .35);
+  transition: opacity .2s;
+}
+.route-pin.is-dim { opacity: .35; }
+
+.route-legend { display: flex; flex-wrap: wrap; gap: 4px 16px; color: var(--muted); font-size: 12px; }
+.route-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.route-legend i { width: 22px; border-top: 3px solid var(--accent); }
+.route-legend .route-legend__other { border-top-style: dashed; }
+
+.route-days { display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; }
+.route-days button {
+  display: grid;
+  grid-template-columns: 64px 1fr;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 8px;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.route-days button:hover { background: var(--surface-2); }
+.route-days button[aria-pressed="true"] { background: color-mix(in srgb, var(--accent) 10%, var(--surface)); }
+.route-days span { padding-top: 2px; font-family: var(--font-mono); font-size: 12px; font-weight: 700; color: var(--accent); }
+.route-days small { display: block; margin-top: 3px; color: var(--muted); font-size: 12px; }
+
+@media (max-width: 480px) {
+  .route-map { height: 280px; }
+}
+
+
 /* ---------- 8. Tur detay paneli ---------- */
 
 .overlay {

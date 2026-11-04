@@ -2,20 +2,22 @@
 
 Tur acentası sitesi şablonu. Site düz HTML/CSS/JS; tur verisi Azure üzerindeki bir API'den canlı olarak gelir.
 
-Canlı adres: https://yellow-water-0a41f371e.4.azurestaticapps.net
-
 ```
 index.html, css/, js/        Site (ön yüz)
   js/data.js                 Gömülü yedek veri; API'ye ulaşılamazsa kullanılır
   js/api.js                  Açılışta /api/catalog'dan veriyi çeker
   js/live.js                 Uçuş sekmesindeki anlık uçuş takibi
   js/hotels.js               Oteller: arama, oda seçimi, rezervasyon
+  js/route-map.js            Tur rota haritası (Amazon Location Service)
 api/                         Azure Functions (Node.js) API
   src/routes.js              API uçları
   src/store.js               Cosmos DB ya da yerel JSON veri katmanı
   src/opensky.js             OpenSky Network'ten canlı uçak konumları
   src/airports.js            Havalimanı koordinatları ve havayolu adları
   src/liteapi.js             LiteAPI (Nuitee Connect) otel arama ve rezervasyon
+  src/location.js            Amazon Location: harita aktarımı ve tur rotaları
+  src/tour-stops.js          Turların gün gün durakları
+  src/guard.js               Ücretli uçların site kontrolü ve istek sınırı
   seed/catalog.json          Test verisi (data.js'ten üretilir)
   scripts/seed-cosmos.js     Test verisini Cosmos DB'ye yükler
 infra/main.bicep             Azure kaynakları (ücretsiz katmanlar)
@@ -52,7 +54,46 @@ Abonelik başına yalnızca **bir** Cosmos DB hesabı ücretsiz katmanda olabili
 | `GET /api/hotels/{id}?checkin=&checkout=&adults=` | Otel bilgisi ve oda seçenekleri |
 | `POST /api/hotels/prebook` | `{ offerId }`: seçilen odanın fiyatını ve müsaitliğini doğrular |
 | `POST /api/hotels/book` | `{ prebookId, firstName, lastName, email }`: rezervasyon (yalnızca sandbox) |
-| `GET /api/health` | Veri kaynağı (`cosmos` ya da `memory`), OpenSky bağlantı türü ve otel servisi durumu |
+| `GET /api/routes/{id}` | Turun durakları ve rotası |
+| `GET /api/map/...` | Harita stili ve parçaları; anahtar sunucuda eklenir |
+| `GET /api/health` | Veri kaynağı (`cosmos` ya da `memory`) ve hangi servislerin yapılandırıldığı |
+
+Otel, harita, rota ve uçuş uçları yalnızca sitenin kendi sayfalarından kabul edilir ve IP başına istek sınırı uygular (`api/src/guard.js`).
+
+## Kendi anahtarlarınızla çalıştırma
+
+Bu depoda API anahtarı yoktur. Depoyu fork edenler kendi hesaplarını açıp kendi anahtarlarını kullanır; anahtar olmayan özellik kapalı kalır, sitenin geri kalanı çalışır.
+
+| Özellik | Değişken | Nereden alınır |
+|---|---|---|
+| Oteller | `LITEAPI_KEY` | [LiteAPI](https://docs.liteapi.travel/docs/booking-a-room) sandbox anahtarı |
+| Rota haritası: harita | `AWS_LOCATION_MAP_KEY` | Amazon Location API anahtarı, izin `geo-maps:GetTile` |
+| Rota haritası: yollar | `AWS_LOCATION_ROUTE_KEY` | Amazon Location API anahtarı, izin `geo-routes:CalculateRoutes` |
+| Anahtarların bölgesi | `AWS_LOCATION_REGION` | İsteğe bağlı, varsayılan `eu-north-1` |
+| Uçuş takibi | `OPENSKY_CLIENT_ID`, `OPENSKY_CLIENT_SECRET` | İsteğe bağlı, [OpenSky](https://opensky-network.org) API client; yoksa hesapsız, düşük kotayla çalışır |
+
+- **Yerelde:** `.env.example` dosyasını `.env` adıyla kopyalayıp doldurun, sonra `npm run dev`. `.env` depoya girmez.
+- **Azure'da:** Aynı değişkenleri Static Web App → **Ayarlar → Ortam değişkenleri → Production**'a ekleyin. `/api/health` hangilerinin tanımlı olduğunu gösterir.
+
+Anahtarları koda, `js/` klasörüne ya da commit'e yazmayın: `js/` altındaki her şey ziyaretçilere gider.
+
+## Rota haritası
+
+Tur detayındaki **Rota Haritası** sekmesi, programdaki durakları gün numaralarıyla ve aralarındaki rotayla [Amazon Location Service](https://docs.aws.amazon.com/location/latest/developerguide/using-apikeys.html) haritası üzerinde gösterir. Bir güne dokununca o günün rotası öne çıkar.
+
+- **Duraklar:** `api/src/tour-stops.js`. Yeni tur eklerken ya da program değişince buraya da yazın.
+- **Rotalar:** Sunucuda hesaplanır ve yalnızca bellekte en fazla 7 gün tutulur. Tren, deniz ve tekne bölümleri kesikli düz çizgidir. Rota anahtarı yoksa ya da servis yanıt vermezse duraklar yine görünür, yollar kesikli düz çizgi olur.
+- **Harita:** MapLibre ve harita parçaları yalnızca sekme açılınca yüklenir. Parçalar `/api/map` üzerinden geçer, tarayıcı anahtarı görmez.
+- **Veri koşulları:** [AWS Hizmet Koşulları](https://aws.amazon.com/service-terms/) madde 82 gereği rota sonuçları en fazla 30 gün saklanabilir, Japonya verisi hiç saklanamaz (Japonya turunda önbellek kapalıdır) ve harita parçaları saklanamaz. Bu yüzden rota dosyalarını depoya eklemeyin.
+
+İki anahtar kullanılır (AWS konsolu → **Amazon Location Service → API keys**); kurulum için aşağıdaki **Kendi anahtarlarınızla çalıştırma** bölümüne bakın.
+
+### Kapatma ve geri alma
+
+Tamamı tek bir commit'te (`route-map-aws` etiketi) durur.
+
+- **Geçici olarak gizlemek:** `js/route-map.js` içinde `ROUTE_MAP_ENABLED = false` yapıp gönderin. Sekme kaybolur.
+- **Tamamen kaldırmak:** `git revert route-map-aws` ve ardından `git push`. Ardından AWS'deki iki anahtarı ve Azure'daki iki değişkeni de silebilirsiniz.
 
 ## Oteller
 
@@ -112,8 +153,6 @@ http://localhost:7071 adresinde site ve API birlikte açılır. `COSMOS_CONNECTI
 
 ## Azure'a kurulum (portal)
 
-Şu anki kurulum bu adımlarla yapıldı: kaynak grubu `senefe-rg`, Cosmos DB West Europe / Germany West Central, Static Web App'in API bölgesi West US 2.
-
 Bir kez gerekenler: [Azure hesabı](https://azure.microsoft.com/free/) ve Node.js 20+. Komutlar PowerShell içindir.
 
 **1. Cosmos DB for NoSQL hesabı**
@@ -122,7 +161,7 @@ Portal → **Azure Cosmos DB → + Oluştur → Azure Cosmos DB for NoSQL**.
 
 | Alan | Değer |
 |---|---|
-| Kaynak grubu | `senefe-rg` (yeni) |
+| Kaynak grubu | `<kaynak-grubu>` (yeni) |
 | Kapasite modu | Sağlanan aktarım hızı (Serverless ücretsiz katmana girmez) |
 | Ücretsiz Katman İndirimini Uygula | Uygula |
 | Toplam hesap aktarım hızını sınırla | İşaretli (1000 RU/s) |
@@ -150,7 +189,7 @@ Portal → **Static Web Apps → + Oluştur**.
 
 | Alan | Değer |
 |---|---|
-| Kaynak grubu | `senefe-rg` |
+| Kaynak grubu | `<kaynak-grubu>` |
 | Plan türü | Ücretsiz |
 | Dağıtım kaynağı | Diğer |
 | Azure Functions API bölgesi | West Europe; seçilemiyorsa East US 2, Central US ya da West US 2 |
@@ -180,15 +219,15 @@ Son satırdaki adreste `/api/health` `"source": "cosmos"` döndürüyorsa kurulu
 
 ```powershell
 az login
-az group create --name senefe-rg --location westeurope
-az deployment group create --resource-group senefe-rg --template-file infra/main.bicep
+az group create --name <kaynak-grubu> --location westeurope
+az deployment group create --resource-group <kaynak-grubu> --template-file infra/main.bicep
 ```
 
 Ardından 2. ve 4. adımlarla devam edin; bağlantı dizesi ve belirteç şu komutlarla da alınabilir:
 
 ```powershell
-az cosmosdb keys list --type connection-strings --resource-group senefe-rg --name <cosmosAccountName> --query "connectionStrings[0].connectionString" -o tsv
-az staticwebapp secrets list --name <staticWebAppName> --resource-group senefe-rg --query "properties.apiKey" -o tsv
+az cosmosdb keys list --type connection-strings --resource-group <kaynak-grubu> --name <cosmosAccountName> --query "connectionStrings[0].connectionString" -o tsv
+az staticwebapp secrets list --name <staticWebAppName> --resource-group <kaynak-grubu> --query "properties.apiKey" -o tsv
 ```
 
 Aboneliğinizde zaten ücretsiz katmanda bir Cosmos hesabı varsa şablona `--parameters cosmosFreeTier=false` verin (ücretli olur). Static Web Apps bölgesi aboneliğinizde kapalıysa `--parameters swaLocation=westus2` ekleyin.

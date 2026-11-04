@@ -792,6 +792,7 @@ function bindCarouselEvents() {
 /** [anahtar, başlık, yalnızca bu alanı olan turlarda göster] */
 const DRAWER_TABS = [
   ["program", "Program"],
+  ...(ROUTE_MAP_ENABLED ? [["route", "Rota Haritası"]] : []),
   ["flight", "Uçuş", "flight"],
   ["cruise", "Gemi & Limanlar", "cruise"],
   ["included", "Dahil / Hariç"],
@@ -820,6 +821,7 @@ function openTour(id) {
 
 function closeTour() {
   stopLiveTracking();
+  destroyRouteMap();
   $("#overlay").hidden = true;
   document.body.style.overflow = "";
   activeTour = null;
@@ -931,6 +933,7 @@ function cruiseTabHTML(tour) {
 
 const TAB_RENDERERS = {
   program: programTabHTML,
+  route: routeMapTabHTML,
   flight: flightTabHTML,
   cruise: cruiseTabHTML,
   included: includedTabHTML,
@@ -1048,6 +1051,7 @@ function renderDrawer() {
       </div>
     </div>`;
   syncLiveTracking();
+  syncRouteMap();
 }
 
 function validateBooking({ name, phone, email }) {
@@ -1071,6 +1075,10 @@ function bindDrawerEvents() {
 
     if (button.classList.contains("drawer__close")) {
       closeTour();
+      return;
+    }
+    if (button.dataset.routeDay) {
+      selectRouteDay(Number(button.dataset.routeDay));
       return;
     }
     if (button.dataset.tab) booking.tab = button.dataset.tab;

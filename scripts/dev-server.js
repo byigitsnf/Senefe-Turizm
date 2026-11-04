@@ -42,12 +42,12 @@ const MIME_TYPES = {
 /** "tours/{id}" gibi rota şablonlarını düzenli ifadeye çevirir. */
 const compiled = ROUTES.map((route) => ({
   ...route,
-  pattern: new RegExp(`^/api/${route.route.replace(/\{(\w+)\}/g, "(?<$1>[^/]+)")}/?$`)
+  pattern: new RegExp(`^/api/${route.route.replace(/\{\*(\w+)\}/g, "(?<$1>.+)").replace(/\{(\w+)\}/g, "(?<$1>[^/]+)")}/?$`)
 }));
 
 function send(response, status, body, type = MIME_TYPES[".json"]) {
   response.writeHead(status, { "Content-Type": type, "Cache-Control": "no-store" });
-  response.end(type === MIME_TYPES[".json"] ? JSON.stringify(body) : body);
+  response.end(type === MIME_TYPES[".json"] && !Buffer.isBuffer(body) ? JSON.stringify(body) : body);
 }
 
 function readJson(request) {
@@ -65,7 +65,12 @@ async function handleApi(url, request, response) {
     try {
       const params = Object.fromEntries(Object.entries(match.groups ?? {}).map(([k, v]) => [k, decodeURIComponent(v)]));
       const input = method === "POST" ? await readJson(request) : undefined;
-      const { status, body } = await handler(Object.fromEntries(url.searchParams), params, input);
+      const context = { headers: request.headers, ip: request.socket.remoteAddress };
+      const { status, body, raw, contentType, cacheControl } = await handler(Object.fromEntries(url.searchParams), params, input, context);
+      if (raw) {
+        response.writeHead(status, { "Content-Type": contentType, "Cache-Control": cacheControl ?? "no-store" });
+        return response.end(raw);
+      }
       return send(response, status, body);
     } catch (error) {
       console.error(error);
