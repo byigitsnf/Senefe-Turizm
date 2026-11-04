@@ -216,6 +216,15 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
 
 /* ---------- 4. Üst menü ve giriş ---------- */
 
+.demo-banner {
+  padding: 6px 16px;
+  background: var(--fg);
+  color: var(--bg);
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+}
+
 .top {
   position: sticky;
   top: env(safe-area-inset-top, 0px);

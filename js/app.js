@@ -846,7 +846,7 @@ function visaTabHTML(tour) {
     return `<p>Yurt içi tur: T.C. kimlik kartınız yeterlidir. 18 yaş altı yolcular için veli muvafakatnamesi gerekir.</p>`;
   }
   if (tour.visa) {
-    return `<p><b>${tour.visa}</b> gereklidir. Başvuru randevusu ve evrak kontrolü acentamız tarafından ücretsiz yapılır. Kalkıştan en az 45 gün önce rezervasyon önerilir.</p>`;
+    return `<p><b>${tour.visa}</b> gereklidir (örnek bilgi). Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>`;
   }
   const note = tour.idCardOk
     ? "Çipli yeni kimlik kartıyla da seyahat edebilirsiniz."
@@ -890,7 +890,7 @@ function flightTabHTML(tour) {
       <ul class="flight__facts">
         <li><b>Kalkış:</b> ${operator.airportName} (${operator.airport}), ${operator.terminal}</li>
         <li><b>Bagaj:</b> ${operator.baggage}</li>
-        <li><b>Buluşma:</b> Kalkıştan ${tour.scope === "yurtici" ? "1,5" : "3"} saat önce havalimanında rehberimizle</li>
+        <li><b>Buluşma:</b> Kalkıştan ${tour.scope === "yurtici" ? "1,5" : "3"} saat önce havalimanında (örnek bilgi)</li>
       </ul>
       <p class="note">Uçuş numaraları ve saatler örnektir; kesin bilgiler biletiniz düzenlendiğinde bildirilir.</p>
       ${liveTrackingHTML()}
@@ -1022,7 +1022,7 @@ function bookingSuccessHTML(tour) {
       <div class="eyebrow">Ön rezervasyon alındı</div>
       <div class="success__code">${booking.confirmation}</div>
       <p>${tour.title} · ${longDate(booking.date)}<br>
-        Temsilcimiz 2 saat içinde ${booking.phone} numarasından size dönecek. (Demo: talep hiçbir yere gönderilmedi.)</p>
+        Demo: talep hiçbir yere gönderilmedi, sizinle iletişime geçilmeyecek.</p>
       <button class="btn btn--ghost" type="button" data-action="new-booking">Yeni rezervasyon</button>
     </div>`;
 }

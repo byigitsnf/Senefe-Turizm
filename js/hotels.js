@@ -203,6 +203,7 @@ function hotelCheckoutHTML() {
         <div class="summary__muted"><span>${prebook.refundable ? "Ücretsiz iptal edilebilir" : "İade edilemez"}</span></div>
       </div>
       ${prebook.priceChanged ? `<p class="hotel-warn">Fiyat, arama sonucundan bu yana değişti; yukarıdaki güncel tutardır.</p>` : ""}
+      <p class="hotel-warn">Demo: gerçek bilgilerinizi girmeyin. Ad ve e-posta test amacıyla LiteAPI sandbox'ına gönderilir; gerçek rezervasyon oluşmaz.</p>
       <form id="hotelBookingForm" class="form-grid" novalidate>
         <div class="field"><label for="hotelFirstName">Ad</label><input class="input" id="hotelFirstName" autocomplete="given-name" value="${escapeHTML(guest.firstName)}"></div>
         <div class="field"><label for="hotelLastName">Soyad</label><input class="input" id="hotelLastName" autocomplete="family-name" value="${escapeHTML(guest.lastName)}"></div>

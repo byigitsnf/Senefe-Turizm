@@ -1,6 +1,6 @@
 # OTA Web App
 
-Tur acentası sitesi şablonu. Site düz HTML/CSS/JS; tur verisi Azure üzerindeki bir API'den canlı olarak gelir.
+Tur acentası sitesi şablonu ve demo projesi; gerçek bir seyahat acentası değildir. Site düz HTML/CSS/JS; tur verisi Azure üzerindeki bir API'den canlı olarak gelir.
 
 ```
 index.html, css/, js/        Site (ön yüz)
