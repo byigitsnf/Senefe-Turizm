@@ -105,7 +105,6 @@ const ROUTES = [
   { name: "hotelBook", route: "hotels/book", method: "POST", handler: protect("hotelBook", 5, hotelRoute((_q, _p, body) => hotels.book(body))) },
   { name: "hotel", route: "hotels/{id}", handler: protect("hotels", 30, hotelRoute(hotels.getHotel)), maxAge: 120 },
   { name: "tourRoute", route: "routes/{id}", handler: protect("routes", 30, location.tourRoute) },
-  { name: "mapStyle", route: "map/style/{scheme}", handler: protect("map", 900, location.mapStyle) },
   { name: "mapAsset", route: "map/{*path}", handler: protect("map", 900, location.mapAsset) },
   { name: "health", route: "health", handler: health }
 ];

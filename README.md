@@ -90,10 +90,10 @@ Tur detayındaki **Rota Haritası** sekmesi, programdaki durakları gün numaral
 
 ### Kapatma ve geri alma
 
-Tamamı tek bir commit'te (`route-map-aws` etiketi) durur.
+Tamamı iki commit'te (`route-map-aws` ve `route-map-aws-fix` etiketleri) durur.
 
 - **Geçici olarak gizlemek:** `js/route-map.js` içinde `ROUTE_MAP_ENABLED = false` yapıp gönderin. Sekme kaybolur.
-- **Tamamen kaldırmak:** `git revert route-map-aws` ve ardından `git push`. Ardından AWS'deki iki anahtarı ve Azure'daki iki değişkeni de silebilirsiniz.
+- **Tamamen kaldırmak:** `git revert --no-edit route-map-aws-fix route-map-aws` ve ardından `git push`. Ardından AWS'deki iki anahtarı ve Azure'daki iki değişkeni de silebilirsiniz.
 
 ## Oteller
 

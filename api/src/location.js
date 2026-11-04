@@ -39,10 +39,9 @@ const amazonHeaders = (context) => ({ Referer: `${siteOrigin(context?.headers)}/
 /* ---------- Harita ---------- */
 
 /** Stil dosyasını alır; içindeki AWS adreslerini kendi /api/map ucumuza çevirir, anahtarı çıkarır. */
-async function mapStyle(_query, { scheme }, _body, context) {
+async function mapStyle(scheme, context) {
   const key = process.env.AWS_LOCATION_MAP_KEY;
   if (!key) return notConfigured("AWS_LOCATION_MAP_KEY");
-  if (!["Light", "Dark"].includes(scheme)) return { status: 400, body: { error: "Geçersiz tema" } };
 
   const response = await fetch(`${mapsBase()}/styles/Standard/descriptor?key=${encodeURIComponent(key)}&color-scheme=${scheme}`, {
     headers: amazonHeaders(context),
@@ -66,7 +65,11 @@ async function mapStyle(_query, { scheme }, _body, context) {
 /** Yalnızca stilin ihtiyaç duyduğu dosyalar geçer; anahtar sunucuda eklenir. */
 const ASSET_PATTERN = /^(tiles\/vector\.basemap\/\d+\/\d+\/\d+|glyphs\/[^/]+\/\d+-\d+\.pbf|styles\/[\w.-]+\/Standard\/\w+\/\w+\/sprites\/sprites(@2x)?\.(json|png))$/;
 
+/** /api/map/style/{Light|Dark} ya da stilin istediği dosyalar: Azure tek rota kuralıyla karşılar. */
 async function mapAsset(_query, { path }, _body, context) {
+  const style = /^style\/(Light|Dark)$/.exec(path ?? "");
+  if (style) return mapStyle(style[1], context);
+
   const key = process.env.AWS_LOCATION_MAP_KEY;
   if (!key) return notConfigured("AWS_LOCATION_MAP_KEY");
   if (!ASSET_PATTERN.test(path ?? "")) return { status: 404, body: { error: "Bulunamadı" } };
@@ -196,4 +199,4 @@ const locationStatus = () => ({
   rota: Boolean(process.env.AWS_LOCATION_ROUTE_KEY)
 });
 
-module.exports = { mapStyle, mapAsset, tourRoute, locationStatus };
+module.exports = { mapAsset, tourRoute, locationStatus };
