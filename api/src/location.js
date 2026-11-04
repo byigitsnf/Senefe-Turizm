@@ -26,8 +26,21 @@ const routesUrl = () => `https://routes.geo.${region()}.amazonaws.com/v2/routes`
 
 const notConfigured = (name) => ({ status: 503, body: { error: `Harita bu kurulumda yapılandırılmamış (${name} eksik)` } });
 
-/** İsteğin geldiği sitenin adresi, ör. https://site.example */
+/**
+ * İsteğin geldiği sitenin adresi, ör. https://site.example.
+ * Azure'da Host ve X-Forwarded-Host iç Functions adresini gösterir; doğru adres
+ * tarayıcının gönderdiği Referer'dadır. Harita isteklerini guard.js zaten
+ * yalnızca sitenin kendisinden kabul eder.
+ */
 function siteOrigin(headers = {}) {
+  if (headers.referer) {
+    try {
+      const { origin } = new URL(headers.referer);
+      if (origin !== "null") return origin;
+    } catch {
+      // Geçersiz Referer: aşağıdaki Host bilgisine düşer
+    }
+  }
   const host = (headers["x-forwarded-host"] ?? headers.host ?? "localhost").split(",")[0].trim();
   const proto = (headers["x-forwarded-proto"] ?? (/^(localhost|127\.)/.test(host) ? "http" : "https")).split(",")[0].trim();
   return `${proto}://${host}`;
@@ -58,16 +71,16 @@ async function mapStyle(scheme, context) {
     status: 200,
     raw: Buffer.from(text),
     contentType: "application/json; charset=utf-8",
-    cacheControl: "private, max-age=3600"
+    cacheControl: "no-store"
   };
 }
 
 /** Yalnızca stilin ihtiyaç duyduğu dosyalar geçer; anahtar sunucuda eklenir. */
 const ASSET_PATTERN = /^(tiles\/vector\.basemap\/\d+\/\d+\/\d+|glyphs\/[^/]+\/\d+-\d+\.pbf|styles\/[\w.-]+\/Standard\/\w+\/\w+\/sprites\/sprites(@2x)?\.(json|png))$/;
 
-/** /api/map/style/{Light|Dark} ya da stilin istediği dosyalar: Azure tek rota kuralıyla karşılar. */
+/** /api/map/style/{Light|Dark}.json ya da stilin istediği dosyalar: Azure tek rota kuralıyla karşılar. */
 async function mapAsset(_query, { path }, _body, context) {
-  const style = /^style\/(Light|Dark)$/.exec(path ?? "");
+  const style = /^style\/(Light|Dark)\.json$/.exec(path ?? "");
   if (style) return mapStyle(style[1], context);
 
   const key = process.env.AWS_LOCATION_MAP_KEY;

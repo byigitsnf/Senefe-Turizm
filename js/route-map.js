@@ -17,7 +17,7 @@ const routeMap = { tourId: null, element: null, map: null, data: null, day: 0, m
 const VIA_LABELS = { rail: "tren", sea: "deniz", boat: "tekne", walk: "yürüyüş" };
 
 const isDarkTheme = () => document.documentElement.classList.contains("dark");
-const mapStyleUrl = () => new URL(`${API_BASE}/map/style/${isDarkTheme() ? "Dark" : "Light"}`, location.href).href;
+const mapStyleUrl = () => new URL(`${API_BASE}/map/style/${isDarkTheme() ? "Dark" : "Light"}.json`, location.href).href;
 
 
 /* ---------- Sekme içeriği ---------- */
